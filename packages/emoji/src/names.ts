@@ -1,23 +1,25 @@
 import { PALETTE } from './canvas'
-import data from 'unicode-emoji-json/data-by-emoji.json'
+import { GROUPS, NAMES } from './palette-names'
 
 // What each palette emoji is called, and its Unicode group (Smileys & Emotion, Animals & Nature, Food & Drink…), from
-// the Unicode data (unicode-emoji-json): Jev is told the names, not only the pictures, and draws its options by group.
-type Entry = { name: string; group: string }
-const byEmoji = data as Record<string, Entry>
-const bare = (e: string) => e.replace(/️/g, '')
-const byBare = new Map(Object.entries(byEmoji).map(([k, v]) => [bare(k), v]))
-export const emojiInfo = (e: string): Entry => byEmoji[e] ?? byBare.get(bare(e)) ?? { name: 'emoji', group: 'Symbols' }
+// the generated table (palette-names.ts): Jev is told names, not only pictures, and draws its options by group.
+export type EmojiInfo = { name: string; group: string }
+const INFO = new Map(NAMES.map(([e, name, g]) => [e, { name, group: GROUPS[g]! }]))
+export const emojiInfo = (e: string): EmojiInfo => INFO.get(e) ?? { name: 'emoji', group: 'Symbols' }
+export const emojiGroups = (): readonly string[] => GROUPS
 
-const GROUPS = new Map<string, string[]>()
-for (const e of PALETTE) {
-  const g = emojiInfo(e).group
-  GROUPS.set(g, [...(GROUPS.get(g) ?? []), e])
-}
+const BY_GROUP = new Map<string, string[]>()
+for (const e of PALETTE) BY_GROUP.set(emojiInfo(e).group, [...(BY_GROUP.get(emojiInfo(e).group) ?? []), e])
+/** The palette's emoji in `group`. */
+export const inGroup = (group: string): readonly string[] => BY_GROUP.get(group) ?? []
 const draw = <T>(list: readonly T[]) => list[Math.floor(Math.random() * list.length)]!
 /** `n` emoji drawn from the palette's `group` (or any group). */
 export function drawEmoji(n: number, group?: string): string[] {
-  const from = (group && GROUPS.get(group)) || PALETTE
+  const from = (group && BY_GROUP.get(group)) || PALETTE
   return Array.from({ length: n }, () => draw(from))
 }
-export const emojiGroups = () => [...GROUPS.keys()]
+/** The palette emoji whose name has every word of `query` (lower case), in palette order. */
+export function searchPalette(query: string): string[] {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean)
+  return words.length ? PALETTE.filter((e) => words.every((w) => emojiInfo(e).name.includes(w))) : [...PALETTE]
+}

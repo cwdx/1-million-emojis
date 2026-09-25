@@ -1,3 +1,3 @@
 export * from './canvas'
 export * from './names'
-export * from './jev-paint'
+export * from './jev-join'

@@ -1,7 +1,7 @@
 {
   "name": "@cw/emoji",
   "version": "0.1.0",
-  "description": "1 Million Emojis: a canvas of a million emoji cells read as one strip, a palette of whole emoji with their Unicode names, and Jev painting a cell as one typed Choice.",
+  "description": "1 Million Emojis: a shared 1000 \u00d7 1000 canvas of emoji cells, a palette of whole emoji with their Unicode names and groups, and Jev joining a drawing by choosing a square and an emoji as one typed Choice.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -9,23 +9,29 @@
     ".": "./src/index.ts",
     "./canvas": "./src/canvas.ts",
     "./names": "./src/names.ts",
-    "./jev-paint": "./src/jev-paint.ts"
+    "./palette-names": "./src/palette-names.ts",
+    "./jev-join": "./src/jev-join.ts"
   },
-  "files": ["src", "LICENSE", "README.md"],
+  "files": [
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "lint": "eslint .",
     "format": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "palette-names": "node scripts/palette-names.ts"
   },
   "dependencies": {
-    "@cw/jev": "*",
-    "unicode-emoji-json": "^0.9.0"
+    "@cw/jev": "*"
   },
   "devDependencies": {
     "@cw/eslint-config": "*",
     "eslint": "^10.11.0",
     "typescript": "^6.0.3",
+    "unicode-emoji-json": "^0.9.0",
     "vitest": "^5.0.1"
   }
 }
