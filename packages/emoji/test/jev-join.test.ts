@@ -15,6 +15,9 @@ describe('jevJoin', () => {
     const r = (await jevJoin(choose, near, stroke))!
     expect(near.has(r.cell)).toBe(false)
     expect(Object.values(asked!.criteria).some((o) => o.includes('water wave'))).toBe(true)
+    // every option is new: none offers the stroke's own emoji
+    expect(Object.values(asked!.criteria).some((o) => o.startsWith('🌊'))).toBe(false)
+    expect(r.emoji).not.toBe('🌊')
     expect(asked!.state).toMatchObject({ picture: ['·····', '·🌊🌊🌊·', '·····'] })
     const { x, y } = { x: r.cell % 1000, y: Math.floor(r.cell / 1000) }
     expect(x >= 9 && x <= 13 && y >= 9 && y <= 11).toBe(true)

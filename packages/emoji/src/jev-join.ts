@@ -4,8 +4,8 @@ import { drawEmoji, emojiGroups, emojiInfo } from './names'
 
 // Jev joins in: after someone paints a stroke, Jev chooses one empty square next to it and what goes there, as one
 // typed Choice over (square, emoji) pairs, so a drawing grows by one more cell. Each option says where the square is
-// and what is around it, by name ("above: 🌊 water wave"); the emoji offered for a square are one of its neighbours'
-// own, one from their Unicode group and one from another, so Jev can carry a line on or add something new. Jev also sees the stroke as a small picture. The pick is
+// and what is around it, by name ("above: 🌊 water wave"); every option is a new emoji, from the neighbours' Unicode
+// group or another, so Jev adds to the picture rather than copying the stroke. Jev also sees the stroke as a small picture. The pick is
 // drawn from Jev's probabilities, so it does not settle into one move. `choose` is a Jev Choice call (@cw/jev
 // `jevChoose` with its keys, or one that also limits and records calls).
 export type JevChoose = (q: { state: unknown; instructions: string; criteria: Record<string, string>; timeoutMs?: number }) => Promise<JevChoice | null>
@@ -14,7 +14,6 @@ export type JevJoined = { cell: number; emoji: string; p: number; candidates: { 
 /** How far around a stroke Jev reads (cells), and how many squares it is offered. */
 export const MARGIN = 2
 const SQUARES = 6
-const PER_SQUARE = 3
 const PICTURE = 14
 const TEMPERATURE = 1
 const DIRS = [[-1, -1, 'above left'], [0, -1, 'above'], [1, -1, 'above right'], [-1, 0, 'left'], [1, 0, 'right'], [-1, 1, 'below left'], [0, 1, 'below'], [1, 1, 'below right']] as const
@@ -52,15 +51,17 @@ export async function jevJoin(choose: JevChoose, near: ReadonlyMap<number, strin
   if (!stroke.length) return null
   const squares = frontier(near, stroke)
   if (!squares.length) return null
+  // Every option is new: two emoji per square, never one already around the stroke (one from the neighbours' group,
+  // one from another). Offered the stroke's own emoji, even at only two squares, Jev copied it nearly every time, which
+  // adds nothing a painter could not.
+  const used = new Set(near.values())
   const options: { cell: number; emoji: string }[] = []
   for (const cell of squares) {
     const next = around(near, cell).map(([, e]) => e)
     const groups = [...new Set(next.map((e) => emojiInfo(e).group))]
     const other = emojiGroups().filter((g) => !groups.includes(g))
-    // one of the neighbours' own (to carry a line on), and two new: one from their group, one from another
-    const same = groups.length ? drawEmoji(1, groups[Math.floor(Math.random() * groups.length)]) : drawEmoji(1)
-    const emoji = [...new Set([...next.slice(0, 1), ...same, ...drawEmoji(1, other[Math.floor(Math.random() * other.length)])])]
-    for (const e of emoji.slice(0, PER_SQUARE)) options.push({ cell, emoji: e })
+    const fresh = (group?: string) => { for (let t = 0; t < 8; t++) { const e = drawEmoji(1, group)[0]!; if (!used.has(e)) { used.add(e); return e } } }
+    for (const e of [fresh(groups[Math.floor(Math.random() * groups.length)]), fresh(other[Math.floor(Math.random() * other.length)])]) if (e) options.push({ cell, emoji: e })
   }
   const describe = (o: { cell: number; emoji: string }) => {
     const by = around(near, o.cell).map(([dir, e]) => `${dir}: ${e} ${emojiInfo(e).name}`).join('; ')
@@ -70,7 +71,7 @@ export async function jevJoin(choose: JevChoose, near: ReadonlyMap<number, strin
   const last = stroke.at(-1)!
   const answer = await choose({
     state: { justPainted: `${stroke.length} cell${stroke.length === 1 ? '' : 's'} of ${near.get(last) ?? 'emoji'}, ending at ${cellLabel(last)}`, picture: picture(near, stroke) },
-    instructions: 'People draw pictures with emoji on a shared grid, one cell each. Someone just painted a stroke (see picture, · is empty). Add one emoji in one square next to it so the drawing grows: carry on its line or shape, or better, add something new that belongs in the scene.',
+    instructions: 'People draw pictures with emoji on a shared grid, one cell each. Someone just painted a stroke (see picture, · is empty). Add one new emoji in one square next to it so the picture grows: something that belongs with what is there, as part of the same scene or story. (The emoji of the stroke itself is not offered.)',
     criteria,
     timeoutMs: 6000,
   })
