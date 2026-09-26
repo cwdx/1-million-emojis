@@ -7,7 +7,7 @@ export const CELLS = SIZE * SIZE
 export type Painter = 'human' | 'jev'
 export type Cell = { cell: number; emoji: string; painter: Painter }
 
-export const isCell = (n: unknown): n is number => Number.isInteger(n) && (n as number) >= 0 && (n as number) < CELLS
+export const isCell = (n: unknown): n is number => typeof n === 'number' && Number.isInteger(n) && n >= 0 && n < CELLS
 /** A cell's column and row, and the cell at a column and row (undefined off the canvas). */
 export const xy = (cell: number) => ({ x: cell % SIZE, y: Math.floor(cell / SIZE) })
 export const cellAt = (x: number, y: number) => (x >= 0 && y >= 0 && x < SIZE && y < SIZE ? y * SIZE + x : undefined)

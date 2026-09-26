@@ -8,7 +8,7 @@ const INFO = new Map(NAMES.map(([e, name, g]) => [e, { name, group: GROUPS[g]! }
 export const emojiInfo = (e: string): EmojiInfo => INFO.get(e) ?? { name: 'emoji', group: 'Symbols' }
 
 const BY_GROUP = new Map<string, string[]>()
-for (const e of PALETTE) BY_GROUP.set(emojiInfo(e).group, [...(BY_GROUP.get(emojiInfo(e).group) ?? []), e])
+for (const e of PALETTE) { const g = emojiInfo(e).group; BY_GROUP.set(g, [...(BY_GROUP.get(g) ?? []), e]) }
 /** An emoji drawn from the palette's `group` (or any group). */
 export function drawEmoji(group?: string): string {
   const from = (group && BY_GROUP.get(group)) || PALETTE

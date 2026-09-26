@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cellAt } from '../src/canvas'
+import { cellAt, xy } from '../src/canvas'
 import { jevJoin, type JevChoose } from '../src/jev-join'
 
 describe('jevJoin', () => {
@@ -19,7 +19,7 @@ describe('jevJoin', () => {
     expect(Object.values(asked!.criteria).some((o) => o.startsWith('🌊'))).toBe(false)
     expect(r.emoji).not.toBe('🌊')
     expect(asked!.state).toMatchObject({ picture: ['·····', '·🌊🌊🌊·', '·····'] })
-    const { x, y } = { x: r.cell % 1000, y: Math.floor(r.cell / 1000) }
+    const { x, y } = xy(r.cell)
     expect(x >= 9 && x <= 13 && y >= 9 && y <= 11).toBe(true)
   })
   it('answers null without a stroke or an answer', async () => {
