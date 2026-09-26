@@ -1,6 +1,7 @@
 import { sample, type JevChoice } from '@cw/jev'
 import { cellAt, cellLabel, xy } from './canvas'
-import { drawEmoji, emojiGroups, emojiInfo } from './names'
+import { drawEmoji, emojiInfo } from './names'
+import { GROUPS } from './palette-names'
 
 // Jev joins in: after someone paints a stroke, Jev chooses one empty square next to it and what goes there, as one
 // typed Choice over (square, emoji) pairs, so a drawing grows by one more cell. Each option says where the square is
@@ -59,8 +60,8 @@ export async function jevJoin(choose: JevChoose, near: ReadonlyMap<number, strin
   for (const cell of squares) {
     const next = around(near, cell).map(([, e]) => e)
     const groups = [...new Set(next.map((e) => emojiInfo(e).group))]
-    const other = emojiGroups().filter((g) => !groups.includes(g))
-    const fresh = (group?: string) => { for (let t = 0; t < 8; t++) { const e = drawEmoji(1, group)[0]!; if (!used.has(e)) { used.add(e); return e } } }
+    const other = GROUPS.filter((g) => !groups.includes(g))
+    const fresh = (group?: string) => { for (let t = 0; t < 8; t++) { const e = drawEmoji(group); if (!used.has(e)) { used.add(e); return e } } }
     for (const e of [fresh(groups[Math.floor(Math.random() * groups.length)]), fresh(other[Math.floor(Math.random() * other.length)])]) if (e) options.push({ cell, emoji: e })
   }
   const describe = (o: { cell: number; emoji: string }) => {

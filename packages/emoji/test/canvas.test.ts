@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { blockOf, cellAt, cellLabel, CELLS, inkLeft, isCell, isPaletteEmoji, isTile, line, PALETTE, TILES, tileOf, tileRanges, xy } from '../src/canvas'
-import { emojiInfo, inGroup, searchPalette } from '../src/names'
+import { emojiInfo } from '../src/names'
 
 describe('the canvas', () => {
   it('is 1000 × 1000 cells, numbered row by row', () => {
@@ -33,10 +33,7 @@ describe('the palette', () => {
     for (const e of ['😶‍🌫️', '🇳🇱', '🌊']) expect(isPaletteEmoji(e)).toBe(true)
     for (const e of ['a', '', '🌊🌊', '🦰']) expect(isPaletteEmoji(e)).toBe(false)
   })
-  it('knows names and groups, and finds emoji by name', () => {
+  it('knows names and groups', () => {
     expect(emojiInfo('🌊')).toEqual({ name: 'water wave', group: 'Travel & Places' })
-    expect(searchPalette('wave')).toContain('🌊')
-    expect(searchPalette('cat face')).toContain('🐱')
-    expect(inGroup('Flags').length).toBeGreaterThan(250)
   })
 })
