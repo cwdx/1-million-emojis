@@ -3,16 +3,12 @@ import { cellAt, cellLabel, xy } from './canvas'
 import { drawEmoji, emojiInfo } from './names'
 import { GROUPS } from './palette-names'
 
-// Jev joins in: after someone paints a stroke, Jev chooses one empty square next to it and what goes there, as one
-// typed Choice over (square, emoji) pairs, so a drawing grows by one more cell. Each option says where the square is
-// and what is around it, by name ("above: 🌊 water wave"); every option is a new emoji, from the neighbours' Unicode
-// group or another, so Jev adds to the picture rather than copying the stroke. Jev also sees the stroke as a small picture. The pick is
-// drawn from Jev's probabilities, so it does not settle into one move. `choose` is a Jev Choice call (@cw/jev
-// `jevChoose` with its keys, or one that also limits and records calls).
+// `choose` is a Jev Choice call: @cw/jev `jevChoose` with its keys, or one that also limits and records calls. The pick
+// is drawn from Jev's probabilities, so it does not settle into one move.
 export type JevChoose = (q: { state: unknown; instructions: string; criteria: Record<string, string>; timeoutMs?: number }) => Promise<JevChoice | null>
 export type JevJoined = { cell: number; emoji: string; p: number; candidates: { cell: number; emoji: string; p: number }[] }
 
-/** How far around a stroke Jev reads (cells), and how many squares it is offered. */
+/** How far around a stroke Jev reads, in cells. */
 export const MARGIN = 2
 const SQUARES = 6
 const PICTURE = 14
@@ -25,7 +21,7 @@ function around(near: ReadonlyMap<number, string>, cell: number) {
   return DIRS.flatMap(([dx, dy, dir]) => { const c = cellAt(x + dx, y + dy); const e = c === undefined ? undefined : near.get(c); return e ? [[dir, e] as const] : [] })
 }
 
-/** The empty squares touching the stroke, latest first, spread along it. */
+/** Latest first, spread along the stroke. */
 function frontier(near: ReadonlyMap<number, string>, stroke: readonly number[]) {
   const seen = new Set<number>(), out: number[] = []
   for (const s of [...stroke].reverse()) {
@@ -39,7 +35,7 @@ function frontier(near: ReadonlyMap<number, string>, stroke: readonly number[]) 
   return out.filter((_, i) => i % step === 0).slice(0, SQUARES)
 }
 
-/** The stroke and its surroundings as rows of emoji (· for an empty cell), at most PICTURE wide and tall. */
+/** Rows of emoji, · for an empty cell. */
 function picture(near: ReadonlyMap<number, string>, stroke: readonly number[]) {
   const pts = stroke.map(xy)
   const x0 = Math.min(...pts.map((p) => p.x)) - 1, y0 = Math.min(...pts.map((p) => p.y)) - 1
@@ -49,12 +45,9 @@ function picture(near: ReadonlyMap<number, string>, stroke: readonly number[]) {
 
 /** Jev's square and emoji next to `stroke`, given the emoji `near` it (cell → emoji); null if Jev did not answer. */
 export async function jevJoin(choose: JevChoose, near: ReadonlyMap<number, string>, stroke: readonly number[]): Promise<JevJoined | null> {
-  if (!stroke.length) return null
   const squares = frontier(near, stroke)
   if (!squares.length) return null
-  // Every option is new: two emoji per square, never one already around the stroke (one from the neighbours' group,
-  // one from another). Offered the stroke's own emoji, even at only two squares, Jev copied it nearly every time, which
-  // adds nothing a painter could not.
+  // Never an emoji already around the stroke: offered the stroke's own, Jev copied it nearly every time.
   const used = new Set(near.values())
   const options: { cell: number; emoji: string }[] = []
   for (const cell of squares) {
