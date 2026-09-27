@@ -1,7 +1,7 @@
 {
   "name": "@cw/emoji",
   "version": "0.1.0",
-  "description": "1 Million Emojis: a shared 1000 \u00d7 1000 canvas of emoji cells, a palette of whole emoji with their Unicode names and groups, and Jev joining a drawing by choosing a square and an emoji as one typed Choice.",
+  "description": "1 Million Emojis: a shared 1000 × 1000 canvas of emoji cells, a palette of whole emoji with their Unicode names and groups, and Jev joining a drawing by choosing a square and an emoji as one typed Choice.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -16,9 +16,9 @@
     "README.md"
   ],
   "scripts": {
-    "lint": "eslint .",
-    "format": "eslint . --fix",
-    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/",
+    "format": "eslint . --fix --cache --cache-location node_modules/.cache/eslint/",
+    "typecheck": "tsgo --noEmit",
     "test": "vitest run",
     "palette-names": "node scripts/palette-names.ts"
   },
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@cw/eslint-config": "*",
+    "@typescript/native-preview": "^7.0.0-dev.20260707.2",
     "eslint": "^10.11.0",
     "typescript": "^6.0.3",
     "unicode-emoji-json": "^0.9.0",
