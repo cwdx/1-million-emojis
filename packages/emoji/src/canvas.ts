@@ -26,6 +26,32 @@ export const BLOCK = 10
 export const BLOCKS = SIZE / BLOCK
 export const blockOf = (cell: number) => { const { x, y } = xy(cell); return Math.floor(y / BLOCK) * BLOCKS + Math.floor(x / BLOCK) }
 
+/** The largest empty rectangle of blocks, by area, from which blocks hold paint: its top-left block and size, in blocks.
+ * The classic maximal-rectangle method: row by row, each column's run of empty blocks upwards is a histogram, and a
+ * stack finds the largest rectangle under it in one pass, O(rows × columns). Ties go to the one nearest the middle. */
+export function largestEmpty(filled: (block: number) => boolean): { bx: number; by: number; w: number; h: number } {
+  const up = new Array<number>(BLOCKS).fill(0)
+  let best = { bx: 0, by: 0, w: 0, h: 0 }, bestD = Infinity
+  const consider = (bx: number, by: number, w: number, h: number) => {
+    const area = w * h, d = Math.hypot(bx + w / 2 - BLOCKS / 2, by + h / 2 - BLOCKS / 2)
+    if (area > best.w * best.h || (area === best.w * best.h && d < bestD)) { best = { bx, by, w, h }; bestD = d }
+  }
+  for (let by = 0; by < BLOCKS; by++) {
+    for (let bx = 0; bx < BLOCKS; bx++) up[bx] = filled(by * BLOCKS + bx) ? 0 : up[bx]! + 1
+    // columns with rising heights; at a drop, every taller bar left of it ends its rectangle here
+    const stack: number[] = []
+    for (let bx = 0; bx <= BLOCKS; bx++) {
+      const height = bx < BLOCKS ? up[bx]! : 0
+      while (stack.length && up[stack.at(-1)!]! >= height) {
+        const top = stack.pop()!, h = up[top]!, left = stack.length ? stack.at(-1)! + 1 : 0
+        if (h) consider(left, by - h + 1, bx - left, h)
+      }
+      stack.push(bx)
+    }
+  }
+  return best
+}
+
 /** A painter's INK cells come back over INK_WINDOW (one a second): a stroke can be long, but nobody floods the canvas. */
 export const INK = 60
 export const INK_WINDOW = 60 * 1000

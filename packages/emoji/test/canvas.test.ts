@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { blockOf, cellAt, cellLabel, CELLS, inkLeft, isCell, isPaletteEmoji, isTile, line, PALETTE, TILES, tileOf, tileRanges, xy } from '../src/canvas'
+import { blockOf, cellAt, cellLabel, CELLS, inkLeft, largestEmpty, isCell, isPaletteEmoji, isTile, line, PALETTE, TILES, tileOf, tileRanges, xy } from '../src/canvas'
 import { emojiInfo } from '../src/names'
 
 describe('the canvas', () => {
@@ -35,5 +35,16 @@ describe('the palette', () => {
   })
   it('knows names and groups', () => {
     expect(emojiInfo('🌊')).toEqual({ name: 'water wave', group: 'Travel & Places' })
+  })
+})
+
+describe('largestEmpty', () => {
+  it('finds the largest empty rectangle by area, not only a square', () => {
+    expect(largestEmpty(() => false)).toEqual({ bx: 0, by: 0, w: 100, h: 100 })
+    // paint down column 50: the left 50 columns are the biggest rectangle (the right side is 49)
+    expect(largestEmpty((b) => b % 100 === 50)).toEqual({ bx: 0, by: 0, w: 50, h: 100 })
+    // a painted row at 30 and a column at 80: 80 × 69 below the row beats any square
+    const r = largestEmpty((b) => Math.floor(b / 100) === 30 || b % 100 === 80)
+    expect(r).toEqual({ bx: 0, by: 31, w: 80, h: 69 })
   })
 })
