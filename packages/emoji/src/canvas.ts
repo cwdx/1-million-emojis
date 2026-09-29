@@ -52,9 +52,11 @@ export function largestEmpty(filled: (block: number) => boolean): { bx: number; 
   return best
 }
 
-/** A painter's INK cells come back over INK_WINDOW (one a second): a stroke can be long, but nobody floods the canvas. */
-export const INK = 60
+/** A painter's INK cells come back over INK_WINDOW (five a second): a stroke can be long, but nobody floods the canvas. */
+export const INK = 300
 export const INK_WINDOW = 60 * 1000
+/** Ink back each second. */
+export const INK_PER_SECOND = INK / (INK_WINDOW / 1000)
 export const inkLeft = (placedInWindow: number) => Math.max(0, INK - placedInWindow)
 
 /** Every cell from `a` to `b` (Bresenham), so a fast stroke leaves no gaps. */

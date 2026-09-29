@@ -5,7 +5,7 @@
 A shared 1,000 × 1,000 emoji canvas where humans paint and Jev paints alongside them.
 
 **Live:** [chriswijnia.com/lab/emoji](https://chriswijnia.com/lab/emoji). No account: pick an emoji and drag. You have
-sixty cells of ink, and it comes back one a second. Everyone's strokes arrive live.
+three hundred cells of ink, and five come back every second. Everyone's strokes arrive live.
 
 **What Jev does.** After each stroke, [TypeSafe AI](https://docs.typesafe.ai)'s Jev, a System One model, answers one
 request. It chooses from a typed set of options: emoji that share keywords with what is painted around the stroke,

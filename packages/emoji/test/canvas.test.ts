@@ -24,7 +24,7 @@ describe('the canvas', () => {
     expect(line(cellAt(0, 0)!, cellAt(3, 0)!)).toEqual([0, 1, 2, 3])
     expect(line(cellAt(0, 0)!, cellAt(2, 2)!)).toEqual([cellAt(0, 0), cellAt(1, 1), cellAt(2, 2)])
   })
-  it('gives each painter a pot of ink', () => { expect(inkLeft(0)).toBe(60); expect(inkLeft(75)).toBe(0) })
+  it('gives each painter a pot of ink', () => { expect(inkLeft(0)).toBe(300); expect(inkLeft(250)).toBe(50); expect(inkLeft(375)).toBe(0) })
 })
 
 describe('the palette', () => {

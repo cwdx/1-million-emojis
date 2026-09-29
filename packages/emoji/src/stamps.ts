@@ -1,8 +1,8 @@
 import { cellAt } from './canvas'
 
 // A stamp is ASCII art: rows of characters, each character an emoji. Capitals are the coloured squares, lower case the
-// circles, and a stamp's own legend can add any other emoji; `.` and spaces are left empty. Each stays within one
-// load of ink (60 cells), and none is anyone's character.
+// circles, and a stamp's own legend can add any other emoji; `.` and spaces are left empty. Each stays under 60 cells,
+// a fifth of a full load of ink, and none is anyone's character.
 export const COLOURS: Readonly<Record<string, string>> = {
   R: '🟥', O: '🟧', Y: '🟨', G: '🟩', B: '🟦', P: '🟪', N: '🟫', K: '⬛', W: '⬜',
   r: '🔴', o: '🟠', y: '🟡', g: '🟢', b: '🔵', p: '🟣', n: '🟤', k: '⚫', w: '⚪',

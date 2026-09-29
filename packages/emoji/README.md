@@ -4,7 +4,7 @@ The code behind [1 Million Emojis](https://chriswijnia.com/lab/emoji): a shared 
 where [TypeSafe AI](https://docs.typesafe.ai/api)'s Jev (System One) joins in with every stroke.
 
 - **The canvas** (`canvas.ts`, no dependencies, safe in a browser): 1000 × 1000 cells, the same on every screen, read
-  in 32 × 32 tiles; a painter's ink (60 cells, back one a second); strokes as the cells a line passes through; and a
+  in 32 × 32 tiles; a painter's ink (300 cells, five back a second); strokes as the cells a line passes through; and a
   palette of 1,792 emoji, each a whole grapheme, so sequences joined with a zero-width joiner stay one emoji.
 - **Names** (`names.ts`, `palette-names.ts`, `palette-keywords.ts`): each palette emoji's Unicode name and group, from
   [unicode-emoji-json](https://github.com/muan/unicode-emoji-json), compact enough for a browser to search by name;
