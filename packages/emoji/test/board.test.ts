@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { decodeBoard, encodeBoard } from '../src/board'
 import { CELLS, PALETTE } from '../src/canvas'
 
-describe('the board string', () => {
+describe('the board bytes', () => {
   it('round-trips painted cells, Jev marks and far gaps, in cell order', () => {
     const cells: [number, string, boolean][] = [[999_999, '🌊', false], [0, '😀', true], [1, PALETTE.at(-1)!, false], [500_000, '🦈', true]]
     expect(decodeBoard(encodeBoard(cells))).toEqual([...cells].sort((a, b) => a[0] - b[0]))
@@ -13,7 +13,7 @@ describe('the board string', () => {
     const full = Array.from({ length: CELLS }, (_, c) => [c, '🌊', false] as [number, string, boolean])
     const packed = encodeBoard(full)
     // a gap byte and two value bytes a cell, before any HTTP compression
-    expect(packed.length).toBeLessThanOrEqual(Math.ceil((CELLS * 3 * 4) / 3))
+    expect(packed.length).toBe(CELLS * 3)
     expect(decodeBoard(packed)).toHaveLength(CELLS)
   })
 })
