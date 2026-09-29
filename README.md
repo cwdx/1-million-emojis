@@ -13,6 +13,10 @@ each in a place named against it ("above the line", "at its end", "inside the lo
 is the stroke unfinished? When it is sure, it closes the loop or carries the line on instead. Its pick is drawn from
 its probabilities, wider the less sure it is, and its top candidates flash on the canvas before the pick lands.
 
+**What goes to Jev.** Only the drawing: the stroke's shape and where it ends, the emoji around it by name, and a small
+text picture of the cells nearby. Nothing about who painted it. Calls go through Vercel's AI Gateway first, TypeSafe
+directly as the fallback, and each visitor has a rate limit and the site a daily spend cap.
+
 <p align="center"><img src="assets/demo.gif" alt="A stroke of waves, Jev adds a shark beside it; a palm tree, Jev adds a dolphin; then the view zooms out over the million cells" width="720"></p>
 
 | Package | What it is | Licence |
