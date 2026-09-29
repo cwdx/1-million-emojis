@@ -1,8 +1,19 @@
+<p align="center"><img src="assets/1000000.png" alt="1000000, in the style of the 💯 emoji" width="480"></p>
+
 # 1 Million Emojis
 
-The code behind [1 Million Emojis](https://chriswijnia.com/lab/emoji): a shared 1000 × 1000 canvas of emoji,
-where visitors paint strokes and [TypeSafe AI](https://docs.typesafe.ai/api)'s Jev (System One) joins in: after each
-stroke it chooses, as one typed Choice, an emoji that belongs with it and where it goes, or finishes the stroke.
+A shared 1,000 × 1,000 emoji canvas where humans paint and Jev paints alongside them.
+
+**Live:** [chriswijnia.com/lab/emoji](https://chriswijnia.com/lab/emoji). No account: pick an emoji and drag. You have
+sixty cells of ink, and it comes back one a second. Everyone's strokes arrive live.
+
+**What Jev does.** After each stroke, [TypeSafe AI](https://docs.typesafe.ai)'s Jev, a System One model, answers one
+request. It chooses from a typed set of options: emoji that share keywords with what is painted around the stroke,
+each in a place named against it ("above the line", "at its end", "inside the loop"). It also answers a yes/no:
+is the stroke unfinished? When it is sure, it closes the loop or carries the line on instead. Its pick is drawn from
+its probabilities, wider the less sure it is, and its top candidates flash on the canvas before the pick lands.
+
+<p align="center"><img src="assets/demo.gif" alt="A stroke of waves, Jev adds a shark beside it; a palm tree, Jev adds a dolphin; then the view zooms out over the million cells" width="720"></p>
 
 | Package | What it is | Licence |
 | --- | --- | --- |
