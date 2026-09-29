@@ -10,17 +10,6 @@ export const xy = (cell: number) => ({ x: cell % SIZE, y: Math.floor(cell / SIZE
 export const cellAt = (x: number, y: number) => (x >= 0 && y >= 0 && x < SIZE && y < SIZE ? y * SIZE + x : undefined)
 export const cellLabel = (cell: number) => { const { x, y } = xy(cell); return `(${x}, ${y})` }
 
-/** Each tile is one query, of one cell range per row. */
-export const TILE = 32
-export const TILES = Math.ceil(SIZE / TILE)
-export const tileOf = (cell: number) => { const { x, y } = xy(cell); return { tx: Math.floor(x / TILE), ty: Math.floor(y / TILE) } }
-export const isTile = (tx: number, ty: number) => Number.isInteger(tx) && Number.isInteger(ty) && tx >= 0 && ty >= 0 && tx < TILES && ty < TILES
-/** [first, last] per row. */
-export function tileRanges(tx: number, ty: number): [number, number][] {
-  const x0 = tx * TILE, x1 = Math.min(SIZE, x0 + TILE) - 1
-  return Array.from({ length: Math.min(SIZE, (ty + 1) * TILE) - ty * TILE }, (_, i) => [cellAt(x0, ty * TILE + i)!, cellAt(x1, ty * TILE + i)!])
-}
-
 /** The minimap's blocks, numbered row by row. */
 export const BLOCK = 10
 export const BLOCKS = SIZE / BLOCK

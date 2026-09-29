@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./canvas": "./src/canvas.ts",
     "./palette-names": "./src/palette-names.ts",
-    "./stamps": "./src/stamps.ts"
+    "./stamps": "./src/stamps.ts",
+    "./board": "./src/board.ts"
   },
   "files": [
     "src",
