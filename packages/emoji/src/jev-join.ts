@@ -111,7 +111,8 @@ export async function jevJoin(ask: JevAsk, near: ReadonlyMap<number, string>, st
   const shape = shapeOf(stroke)
   const places = placesFor(near, stroke, shape)
   if (!places.length) return null
-  const own = near.get(stroke.at(-1)!)
+  const last = stroke.at(-1)!
+  const own = near.get(last)
   const ownName = own ? emojiInfo(own).name : 'emoji'
   const options = relatedEmoji(near, random).flatMap((emoji) => places.map((p) => ({ ...p, emoji })))
   const criteria = Object.fromEntries(options.map((o, i) => [`o${i}`, `${o.emoji} ${emojiInfo(o.emoji).name}, ${o.where}`]))
@@ -119,7 +120,7 @@ export async function jevJoin(ask: JevAsk, near: ReadonlyMap<number, string>, st
 
   const r = await ask({
     state: {
-      justPainted: `a ${shape.noun} of ${stroke.length} ${ownName}, ending at ${cellLabel(stroke.at(-1)!)}`,
+      justPainted: `a ${shape.noun} of ${stroke.length} ${ownName}, ending at ${cellLabel(last)}`,
       around: counts(near).slice(0, 8).map(([e, n]) => `${n}× ${emojiInfo(e).name}`).join(', '),
       picture: picture(near, stroke),
     },
@@ -135,8 +136,7 @@ export async function jevJoin(ask: JevAsk, near: ReadonlyMap<number, string>, st
   })
   const pick = r?.answers.pick
   if (!r || !pick?.probabilities) return null
-  const keys = Object.keys(criteria)
-  const key = sample(pick.probabilities, keys, 1 - (pick.confidence ?? 0)) ?? pick.choice
+  const key = sample(pick.probabilities, Object.keys(criteria), 1 - (pick.confidence ?? 0)) ?? pick.choice
   if (!key || !(key in criteria)) return null
   const option = (k: string) => options[Number(k.slice(1))]!
   const candidates = Object.entries(pick.probabilities).filter(([k]) => k in criteria).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, p]) => ({ cell: option(k).cell, emoji: option(k).emoji, p }))
