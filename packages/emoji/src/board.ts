@@ -1,11 +1,9 @@
 import { PALETTE } from './canvas'
 
-// The whole canvas as bytes: the painted cells in order, each as the gap from the one before (a varint) and two bytes
-// (its palette index + 1, the top bit set when Jev painted it). Sparse or full, it packs small: a full canvas is all
-// gaps of one, which compression then all but removes.
 const INDEX = new Map(PALETTE.map((e, i) => [e, i]))
 const JEV = 0x8000
 
+/** The painted cells in order, each as the gap from the one before (a varint) and two bytes: palette index + 1, top bit set when Jev painted it. */
 export function encodeBoard(cells: Iterable<readonly [number, string, boolean]>): Uint8Array {
   const bytes: number[] = []
   let prev = -1

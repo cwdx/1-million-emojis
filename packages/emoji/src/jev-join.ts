@@ -3,8 +3,6 @@ import { cellAt, cellLabel, line, PALETTE, xy } from './canvas'
 import { emojiInfo } from './names'
 import { KEYWORDS } from './palette-keywords'
 
-// One request: a Choice over (emoji, place) pairs, and a Noul on whether the stroke is an unfinished shape. The emoji
-// share keywords with the scene, so Jev chooses between fitting ones; the pick is drawn wider the less sure Jev is.
 export type JevJoined = { cell: number; cells: number[]; emoji: string; p: number; candidates: { cell: number; emoji: string; p: number }[] }
 
 /** How far around a stroke Jev reads, in cells. */

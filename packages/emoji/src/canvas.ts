@@ -15,9 +15,7 @@ export const BLOCK = 10
 export const BLOCKS = SIZE / BLOCK
 export const blockOf = (cell: number) => { const { x, y } = xy(cell); return Math.floor(y / BLOCK) * BLOCKS + Math.floor(x / BLOCK) }
 
-/** The largest empty rectangle of blocks, by area, from which blocks hold paint: its top-left block and size, in blocks.
- * The classic maximal-rectangle method: row by row, each column's run of empty blocks upwards is a histogram, and a
- * stack finds the largest rectangle under it in one pass, O(rows × columns). Ties go to the one nearest the middle. */
+/** The largest empty rectangle of blocks (top-left block and size, in blocks), ties to the one nearest the middle; a histogram stack per row, O(rows × columns). */
 export function largestEmpty(filled: (block: number) => boolean): { bx: number; by: number; w: number; h: number } {
   const up = new Array<number>(BLOCKS).fill(0)
   let best = { bx: 0, by: 0, w: 0, h: 0 }, bestD = Infinity
@@ -41,7 +39,7 @@ export function largestEmpty(filled: (block: number) => boolean): { bx: number; 
   return best
 }
 
-/** A painter's INK cells come back over INK_WINDOW (five a second): a stroke can be long, but nobody floods the canvas. */
+/** A painter's INK cells come back over INK_WINDOW: a stroke can be long, but nobody floods the canvas. */
 export const INK = 300
 export const INK_WINDOW = 60 * 1000
 /** Ink back each second. */
