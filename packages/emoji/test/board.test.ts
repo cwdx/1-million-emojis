@@ -12,7 +12,6 @@ describe('the board bytes', () => {
     expect(decodeBoard(encodeBoard([[5, 'not an emoji', false], [6, '🔥', false]]))).toEqual([[6, '🔥', false]])
     const full = Array.from({ length: CELLS }, (_, c) => [c, '🌊', false] as [number, string, boolean])
     const packed = encodeBoard(full)
-    // a gap byte and two value bytes a cell, before any HTTP compression
     expect(packed.length).toBe(CELLS * 3)
     expect(decodeBoard(packed)).toHaveLength(CELLS)
   })

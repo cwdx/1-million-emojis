@@ -5,12 +5,10 @@ import { KEYWORDS } from './palette-keywords'
 
 export type JevJoined = { cell: number; cells: number[]; emoji: string; p: number; candidates: { cell: number; emoji: string; p: number }[] }
 
-/** How far around a stroke Jev reads, in cells. */
 export const MARGIN = 2
 const PICTURE = 14
 const RELATED = 6
 const WILD = 2
-/** Above this, Jev finishes the stroke with its own emoji instead of adding one. */
 const FINISH = 0.7
 const MAX_FINISH = 3
 const DIRS = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]] as const
@@ -25,7 +23,6 @@ const counts = (near: ReadonlyMap<number, string>) => {
   return [...n].sort((a, b) => b[1] - a[1])
 }
 
-/** Emoji sharing the scene's keywords (the rarer, the more they count), a little shuffled, then wildcards; none already in the scene. */
 export function relatedEmoji(near: ReadonlyMap<number, string>, random = Math.random): string[] {
   const want = new Map<string, number>()
   for (const [e, n] of counts(near)) for (const w of WORDS.get(e) ?? []) want.set(w, (want.get(w) ?? 0) + n)
@@ -35,7 +32,6 @@ export function relatedEmoji(near: ReadonlyMap<number, string>, random = Math.ra
     const s = (WORDS.get(e) ?? []).reduce((sum, w) => sum + (want.get(w) ?? 0) * Math.log(1 + PALETTE.length / DF.get(w)!), 0)
     return s > 0 ? [[e, s * (0.75 + random() / 2)] as const] : []
   })
-  // 🏄‍♂️ and 🏄‍♀️ share their keywords: one of them is enough
   const seen = new Set<string>(), out: string[] = []
   for (const [e] of scored.sort((a, b) => b[1] - a[1])) {
     const k = KEYWORDS[e]!
@@ -50,7 +46,6 @@ export function relatedEmoji(near: ReadonlyMap<number, string>, random = Math.ra
 }
 
 type Shape = { noun: string; closed: boolean; across: boolean }
-/** What the stroke looks like: a cell, a line, a loop, a filled patch or a curve. */
 export function shapeOf(stroke: readonly number[]): Shape {
   const pts = stroke.map(xy)
   const w = Math.max(...pts.map((p) => p.x)) - Math.min(...pts.map((p) => p.x)) + 1
@@ -65,7 +60,6 @@ export function shapeOf(stroke: readonly number[]): Shape {
 }
 
 type Place = { cell: number; where: string }
-/** Up to three empty squares, each named by where it sits against the stroke. */
 function placesFor(near: ReadonlyMap<number, string>, stroke: readonly number[], shape: Shape): Place[] {
   const empty = (x: number, y: number) => { const c = cellAt(x, y); return c !== undefined && !near.has(c) ? c : undefined }
   const out: Place[] = []
@@ -75,7 +69,6 @@ function placesFor(near: ReadonlyMap<number, string>, stroke: readonly number[],
     const cx = Math.round(pts.reduce((s, p) => s + p.x, 0) / pts.length), cy = Math.round(pts.reduce((s, p) => s + p.y, 0) / pts.length)
     add(empty(cx, cy), 'inside the loop')
   } else add(empty(last.x + Math.sign(last.x - prev.x), last.y + Math.sign(last.y - prev.y)), `at the end of the ${shape.noun}, carrying it on`)
-  // from the middle of the stroke outwards, the first stroke cell with room on that side
   const middle = pts.map((p, i) => ({ p, d: Math.abs(i - pts.length / 2) })).sort((a, b) => a.d - b.d).map(({ p }) => p)
   const sides = shape.across ? [[0, -1, 'above'], [0, 1, 'below']] as const : [[-1, 0, 'left of'], [1, 0, 'right of']] as const
   for (const [dx, dy, side] of sides) add(middle.map((p) => empty(p.x + dx, p.y + dy)).find((c) => c !== undefined), `${side} the ${shape.noun}`)
@@ -83,7 +76,6 @@ function placesFor(near: ReadonlyMap<number, string>, stroke: readonly number[],
   return out.slice(0, 3)
 }
 
-/** The empty cells that would close the loop, or carry the line on; empty if neither fits. */
 function finishCells(near: ReadonlyMap<number, string>, stroke: readonly number[], shape: Shape): number[] {
   if (shape.noun === 'cell' || shape.noun === 'patch') return []
   const last = stroke.at(-1)!
@@ -95,7 +87,6 @@ function finishCells(near: ReadonlyMap<number, string>, stroke: readonly number[
   return cells
 }
 
-/** Rows of emoji, · for an empty cell. */
 function picture(near: ReadonlyMap<number, string>, stroke: readonly number[]) {
   const pts = stroke.map(xy)
   const x0 = Math.min(...pts.map((p) => p.x)) - 1, y0 = Math.min(...pts.map((p) => p.y)) - 1
@@ -103,7 +94,6 @@ function picture(near: ReadonlyMap<number, string>, stroke: readonly number[]) {
   return Array.from({ length: h }, (_, j) => Array.from({ length: w }, (_, i) => { const c = cellAt(x0 + i, y0 + j); return (c !== undefined && near.get(c)) || '·' }).join(''))
 }
 
-/** Jev's move next to `stroke`, given the emoji `near` it (cell → emoji); null if Jev did not answer. */
 export async function jevJoin(ask: JevAsk, near: ReadonlyMap<number, string>, stroke: readonly number[], random = Math.random): Promise<JevJoined | null> {
   if (!stroke.length) return null
   const shape = shapeOf(stroke)

@@ -25,7 +25,6 @@ describe('jevJoin', () => {
     const criteria = Object.values((seen.q!.questions.pick as Extract<JevQuestion, { type: 'choice' }>).criteria)
     expect(criteria.some((o) => o.includes('above the line'))).toBe(true)
     expect(criteria.some((o) => o.includes('at the end of the line'))).toBe(true)
-    // every option is new: none offers the stroke's own emoji
     expect(criteria.some((o) => o.startsWith('🌊'))).toBe(false)
     expect(seen.q!.state).toMatchObject({ around: '3× water wave', picture: ['·····', '·🌊🌊🌊·', '·····'] })
     expect(near.has(r.cell)).toBe(false)

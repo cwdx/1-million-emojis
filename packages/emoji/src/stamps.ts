@@ -1,8 +1,6 @@
 import { cellAt } from './canvas'
 
-// A stamp is ASCII art: rows of characters, each character an emoji. Capitals are the coloured squares, lower case the
-// circles, and a stamp's own legend can add any other emoji; `.` and spaces are left empty. Each stays under 60 cells,
-// a fifth of a full load of ink, and none is anyone's character.
+// Capitals are the coloured squares, lower case the circles, a legend adds others; `.` and spaces stay empty.
 export const COLOURS: Readonly<Record<string, string>> = {
   R: '🟥', O: '🟧', Y: '🟨', G: '🟩', B: '🟦', P: '🟪', N: '🟫', K: '⬛', W: '⬜',
   r: '🔴', o: '🟠', y: '🟡', g: '🟢', b: '🔵', p: '🟣', n: '🟤', k: '⚫', w: '⚪',
@@ -31,7 +29,6 @@ export const STAMPS: readonly Stamp[] = [
 
 const emojiOf = (stamp: Stamp, ch: string) => stamp.legend?.[ch] ?? COLOURS[ch]
 
-/** The stamp's [dx, dy, emoji] from its middle, so it lands centred on the cell pointed at. */
 export function stampOffsets(stamp: Stamp): [number, number, string][] {
   const h = stamp.rows.length, w = Math.max(...stamp.rows.map((r) => r.length))
   const x0 = Math.floor(w / 2), y0 = Math.floor(h / 2)
@@ -41,7 +38,6 @@ export function stampOffsets(stamp: Stamp): [number, number, string][] {
   }))
 }
 
-/** The stamp centred at (x, y): [cell, emoji] pairs, without the cells that fall off the canvas. */
 export function stampAt(stamp: Stamp, x: number, y: number): [number, string][] {
   return stampOffsets(stamp).flatMap(([dx, dy, e]) => { const c = cellAt(x + dx, y + dy); return c === undefined ? [] : [[c, e] as [number, string]] })
 }
