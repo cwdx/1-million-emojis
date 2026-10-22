@@ -1,7 +1,7 @@
-import { sample, type JevAsk } from '@cw/jev'
-import { cellAt, cellLabel, line, PALETTE, xy } from './canvas'
-import { emojiInfo } from './names'
-import { KEYWORDS } from './palette-keywords'
+import { sample, type JevAsk } from "@cw/jev"
+import { cellAt, cellLabel, line, PALETTE, xy } from "./canvas"
+import { emojiInfo } from "./names"
+import { KEYWORDS } from "./palette-keywords"
 
 export type JevJoined = { cell: number; cells: number[]; emoji: string; p: number; candidates: { cell: number; emoji: string; p: number }[] }
 
@@ -13,7 +13,7 @@ const FINISH = 0.7
 const MAX_FINISH = 3
 const DIRS = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]] as const
 
-const WORDS = new Map(PALETTE.map((e) => [e, (KEYWORDS[e] ?? '').split(' ').filter(Boolean)]))
+const WORDS = new Map(PALETTE.map((e) => [e, (KEYWORDS[e] ?? "").split(" ").filter(Boolean)]))
 const DF = new Map<string, number>()
 for (const ws of WORDS.values()) for (const w of ws) DF.set(w, (DF.get(w) ?? 0) + 1)
 
@@ -52,11 +52,11 @@ export function shapeOf(stroke: readonly number[]): Shape {
   const h = Math.max(...pts.map((p) => p.y)) - Math.min(...pts.map((p) => p.y)) + 1
   const a = pts[0]!, b = pts.at(-1)!
   const across = w >= h
-  if (stroke.length === 1) return { noun: 'cell', closed: false, across }
-  if (stroke.length >= 6 && w >= 3 && h >= 3 && Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) <= MAX_FINISH + 1) return { noun: 'loop', closed: true, across }
-  if (h === 1 || w === 1) return { noun: 'line', closed: false, across }
-  if (w >= 3 && h >= 3 && new Set(stroke).size >= w * h * 0.6) return { noun: 'patch', closed: false, across }
-  return { noun: 'curve', closed: false, across }
+  if (stroke.length === 1) return { noun: "cell", closed: false, across }
+  if (stroke.length >= 6 && w >= 3 && h >= 3 && Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) <= MAX_FINISH + 1) return { noun: "loop", closed: true, across }
+  if (h === 1 || w === 1) return { noun: "line", closed: false, across }
+  if (w >= 3 && h >= 3 && new Set(stroke).size >= w * h * 0.6) return { noun: "patch", closed: false, across }
+  return { noun: "curve", closed: false, across }
 }
 
 type Place = { cell: number; where: string }
@@ -67,17 +67,17 @@ function placesFor(near: ReadonlyMap<number, string>, stroke: readonly number[],
   const pts = stroke.map(xy), last = pts.at(-1)!, prev = pts.at(-2) ?? { x: last.x - 1, y: last.y }
   if (shape.closed) {
     const cx = Math.round(pts.reduce((s, p) => s + p.x, 0) / pts.length), cy = Math.round(pts.reduce((s, p) => s + p.y, 0) / pts.length)
-    add(empty(cx, cy), 'inside the loop')
+    add(empty(cx, cy), "inside the loop")
   } else add(empty(last.x + Math.sign(last.x - prev.x), last.y + Math.sign(last.y - prev.y)), `at the end of the ${shape.noun}, carrying it on`)
   const middle = pts.map((p, i) => ({ p, d: Math.abs(i - pts.length / 2) })).sort((a, b) => a.d - b.d).map(({ p }) => p)
-  const sides = shape.across ? [[0, -1, 'above'], [0, 1, 'below']] as const : [[-1, 0, 'left of'], [1, 0, 'right of']] as const
+  const sides = shape.across ? [[0, -1, "above"], [0, 1, "below"]] as const : [[-1, 0, "left of"], [1, 0, "right of"]] as const
   for (const [dx, dy, side] of sides) add(middle.map((p) => empty(p.x + dx, p.y + dy)).find((c) => c !== undefined), `${side} the ${shape.noun}`)
   if (!out.length) for (const p of [...pts].reverse()) for (const [dx, dy] of DIRS) add(empty(p.x + dx, p.y + dy), `next to the ${shape.noun}`)
   return out.slice(0, 3)
 }
 
 function finishCells(near: ReadonlyMap<number, string>, stroke: readonly number[], shape: Shape): number[] {
-  if (shape.noun === 'cell' || shape.noun === 'patch') return []
+  if (shape.noun === "cell" || shape.noun === "patch") return []
   const last = stroke.at(-1)!
   if (shape.closed) return line(last, stroke[0]!).slice(1, -1).filter((c) => !near.has(c)).slice(0, MAX_FINISH)
   const { x, y } = xy(last), prev = xy(stroke.at(-2)!)
@@ -91,7 +91,7 @@ function picture(near: ReadonlyMap<number, string>, stroke: readonly number[]) {
   const pts = stroke.map(xy)
   const x0 = Math.min(...pts.map((p) => p.x)) - 1, y0 = Math.min(...pts.map((p) => p.y)) - 1
   const w = Math.min(PICTURE, Math.max(...pts.map((p) => p.x)) - x0 + 2), h = Math.min(PICTURE, Math.max(...pts.map((p) => p.y)) - y0 + 2)
-  return Array.from({ length: h }, (_, j) => Array.from({ length: w }, (_, i) => { const c = cellAt(x0 + i, y0 + j); return (c !== undefined && near.get(c)) || '·' }).join(''))
+  return Array.from({ length: h }, (_, j) => Array.from({ length: w }, (_, i) => { const c = cellAt(x0 + i, y0 + j); return (c !== undefined && near.get(c)) || "·" }).join(""))
 }
 
 export async function jevJoin(ask: JevAsk, near: ReadonlyMap<number, string>, stroke: readonly number[], random = Math.random): Promise<JevJoined | null> {
@@ -101,7 +101,7 @@ export async function jevJoin(ask: JevAsk, near: ReadonlyMap<number, string>, st
   if (!places.length) return null
   const last = stroke.at(-1)!
   const own = near.get(last)
-  const ownName = own ? emojiInfo(own).name : 'emoji'
+  const ownName = own ? emojiInfo(own).name : "emoji"
   const options = relatedEmoji(near, random).flatMap((emoji) => places.map((p) => ({ ...p, emoji })))
   const criteria = Object.fromEntries(options.map((o, i) => [`o${i}`, `${o.emoji} ${emojiInfo(o.emoji).name}, ${o.where}`]))
   const finish = own ? finishCells(near, stroke, shape) : []
@@ -109,16 +109,16 @@ export async function jevJoin(ask: JevAsk, near: ReadonlyMap<number, string>, st
   const r = await ask({
     state: {
       justPainted: `a ${shape.noun} of ${stroke.length} ${ownName}, ending at ${cellLabel(last)}`,
-      around: counts(near).slice(0, 8).map(([e, n]) => `${n}× ${emojiInfo(e).name}`).join(', '),
+      around: counts(near).slice(0, 8).map(([e, n]) => `${n}× ${emojiInfo(e).name}`).join(", "),
       picture: picture(near, stroke),
     },
     questions: {
       pick: {
-        type: 'choice',
-        instructions: 'People draw pictures with emoji on a shared grid, one cell each. Someone just painted a stroke (`justPainted`; `around` counts what is nearby; in `picture`, · is empty). Add one new emoji in one square next to it so the picture grows: something that belongs with what is there, in the place it would be in the same scene.',
+        type: "choice",
+        instructions: "People draw pictures with emoji on a shared grid, one cell each. Someone just painted a stroke (`justPainted`; `around` counts what is nearby; in `picture`, · is empty). Add one new emoji in one square next to it so the picture grows: something that belongs with what is there, in the place it would be in the same scene.",
         criteria,
       },
-      ...(finish.length ? { finish: { type: 'noul' as const, instructions: `The painter meant this stroke to go on: ${finish.length} more ${ownName} would ${shape.closed ? 'close the loop' : 'carry the line on'}, as its painter most likely meant.` } } : {}),
+      ...(finish.length ? { finish: { type: "noul" as const, instructions: `The painter meant this stroke to go on: ${finish.length} more ${ownName} would ${shape.closed ? "close the loop" : "carry the line on"}, as its painter most likely meant.` } } : {}),
     },
     timeoutMs: 6000,
   })

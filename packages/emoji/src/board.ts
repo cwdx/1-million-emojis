@@ -1,4 +1,4 @@
-import { PALETTE } from './canvas'
+import { PALETTE } from "./canvas"
 
 const INDEX = new Map(PALETTE.map((e, i) => [e, i]))
 const JEV = 0x8000

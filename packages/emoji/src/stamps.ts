@@ -1,30 +1,30 @@
-import { cellAt } from './canvas'
+import { cellAt } from "./canvas"
 
 // Capitals are the coloured squares, lower case the circles, a legend adds others; `.` and spaces stay empty.
 export const COLOURS: Readonly<Record<string, string>> = {
-  R: '🟥', O: '🟧', Y: '🟨', G: '🟩', B: '🟦', P: '🟪', N: '🟫', K: '⬛', W: '⬜',
-  r: '🔴', o: '🟠', y: '🟡', g: '🟢', b: '🔵', p: '🟣', n: '🟤', k: '⚫', w: '⚪',
+  R: "🟥", O: "🟧", Y: "🟨", G: "🟩", B: "🟦", P: "🟪", N: "🟫", K: "⬛", W: "⬜",
+  r: "🔴", o: "🟠", y: "🟡", g: "🟢", b: "🔵", p: "🟣", n: "🟤", k: "⚫", w: "⚪",
 }
 export type Stamp = { id: string; name: string; rows: readonly string[]; legend?: Readonly<Record<string, string>> }
 
 export const STAMPS: readonly Stamp[] = [
-  { id: 'heart', name: 'Heart', rows: ['.RR.RR.', 'RRRRRRR', 'RRRRRRR', '.RRRRR.', '..RRR..', '...R...'] },
-  { id: 'smiley', name: 'Smiley', rows: ['.YYYYY.', 'YYYYYYY', 'YKYYYKY', 'YYYYYYY', 'YKYYYKY', 'YYKKKYY', '.YYYYY.'] },
-  { id: 'sun', name: 'Sun', rows: ['y..y..y', '.YYYYY.', '.YYYYY.', 'yYYYYYy', '.YYYYY.', '.YYYYY.', 'y..y..y'] },
-  { id: 'rainbow', name: 'Rainbow', rows: ['...RRRRR...', '..ROOOOOR..', '.ROYYYYYOR.', 'ROYGGGGGYOR', 'ROYG...GYOR', 'ROYG...GYOR'] },
-  { id: 'cloud', name: 'Rain cloud', rows: ['..WWW...', '.WWWWWW.', 'WWWWWWWW', '.WWWWWW.', '.b.b.b..', 'b.b.b...'] },
-  { id: 'star', name: 'Star', rows: ['...Y...', '...Y...', 'YYYYYYY', '.YYYYY.', '..YYY..', '.YY.YY.', 'YY...YY'] },
-  { id: 'house', name: 'House', rows: ['...R...', '..RRR..', '.RRRRR.', 'RRRRRRR', '.WWWWW.', '.WBWNW.', '.WWWNW.'] },
-  { id: 'tree', name: 'Tree', rows: ['..GGG..', '.GGGGG.', 'GGGGGGG', '.GGGGG.', '..GGG..', '...N...', '...N...'] },
-  { id: 'flower', name: 'Flower', rows: ['.P.P.', 'PPyPP', '.PPP.', '..G..', '.GG..', '..G..'] },
-  { id: 'mushroom', name: 'Mushroom', rows: ['..RRRR..', '.RWRRWR.', 'RRRRRRRR', 'RWRRRRWR', '..WWWW..', '..WKKW..', '..WWWW..'] },
-  { id: 'fish', name: 'Fish', rows: ['..BBB...', '.BBBBB.B', 'BBKBBBBB', '.BBBBB.B', '..BBB...'] },
-  { id: 'cat', name: 'Cat', rows: ['K.....K', 'KK...KK', 'KKKKKKK', 'KGKKKGK', 'KKKWKKK', '.KKKKK.'] },
-  { id: 'ghost', name: 'Ghost', rows: ['..WWW..', '.WWWWW.', 'WWKWKWW', 'WWWWWWW', 'WWWWWWW', 'W.W.W.W'] },
-  { id: 'rocket', name: 'Rocket', rows: ['...R...', '..WWW..', '..WBW..', '..WWW..', '..WWW..', '.RWWWR.', 'RR.O.RR', '...*...'], legend: { '*': '🔥' } },
-  { id: 'crown', name: 'Crown', rows: ['Y..Y..Y', 'YY.Y.YY', 'YYYYYYY', 'YrYbYrY', 'YYYYYYY'] },
-  { id: 'globe', name: 'Globe', rows: ['.BBGB.', 'BGGBBB', 'BBGGGB', 'BBBGBB', '.BBBB.'] },
-  { id: 'night', name: 'Moon and stars', rows: ['*....YY', '....YY.', '..*YY..', '...YY..', '*...YY.', '.....YY'], legend: { '*': '⭐' } },
+  { id: "heart", name: "Heart", rows: [".RR.RR.", "RRRRRRR", "RRRRRRR", ".RRRRR.", "..RRR..", "...R..."] },
+  { id: "smiley", name: "Smiley", rows: [".YYYYY.", "YYYYYYY", "YKYYYKY", "YYYYYYY", "YKYYYKY", "YYKKKYY", ".YYYYY."] },
+  { id: "sun", name: "Sun", rows: ["y..y..y", ".YYYYY.", ".YYYYY.", "yYYYYYy", ".YYYYY.", ".YYYYY.", "y..y..y"] },
+  { id: "rainbow", name: "Rainbow", rows: ["...RRRRR...", "..ROOOOOR..", ".ROYYYYYOR.", "ROYGGGGGYOR", "ROYG...GYOR", "ROYG...GYOR"] },
+  { id: "cloud", name: "Rain cloud", rows: ["..WWW...", ".WWWWWW.", "WWWWWWWW", ".WWWWWW.", ".b.b.b..", "b.b.b..."] },
+  { id: "star", name: "Star", rows: ["...Y...", "...Y...", "YYYYYYY", ".YYYYY.", "..YYY..", ".YY.YY.", "YY...YY"] },
+  { id: "house", name: "House", rows: ["...R...", "..RRR..", ".RRRRR.", "RRRRRRR", ".WWWWW.", ".WBWNW.", ".WWWNW."] },
+  { id: "tree", name: "Tree", rows: ["..GGG..", ".GGGGG.", "GGGGGGG", ".GGGGG.", "..GGG..", "...N...", "...N..."] },
+  { id: "flower", name: "Flower", rows: [".P.P.", "PPyPP", ".PPP.", "..G..", ".GG..", "..G.."] },
+  { id: "mushroom", name: "Mushroom", rows: ["..RRRR..", ".RWRRWR.", "RRRRRRRR", "RWRRRRWR", "..WWWW..", "..WKKW..", "..WWWW.."] },
+  { id: "fish", name: "Fish", rows: ["..BBB...", ".BBBBB.B", "BBKBBBBB", ".BBBBB.B", "..BBB..."] },
+  { id: "cat", name: "Cat", rows: ["K.....K", "KK...KK", "KKKKKKK", "KGKKKGK", "KKKWKKK", ".KKKKK."] },
+  { id: "ghost", name: "Ghost", rows: ["..WWW..", ".WWWWW.", "WWKWKWW", "WWWWWWW", "WWWWWWW", "W.W.W.W"] },
+  { id: "rocket", name: "Rocket", rows: ["...R...", "..WWW..", "..WBW..", "..WWW..", "..WWW..", ".RWWWR.", "RR.O.RR", "...*..."], legend: { "*": "🔥" } },
+  { id: "crown", name: "Crown", rows: ["Y..Y..Y", "YY.Y.YY", "YYYYYYY", "YrYbYrY", "YYYYYYY"] },
+  { id: "globe", name: "Globe", rows: [".BBGB.", "BGGBBB", "BBGGGB", "BBBGBB", ".BBBB."] },
+  { id: "night", name: "Moon and stars", rows: ["*....YY", "....YY.", "..*YY..", "...YY..", "*...YY.", ".....YY"], legend: { "*": "⭐" } },
 ]
 
 const emojiOf = (stamp: Stamp, ch: string) => stamp.legend?.[ch] ?? COLOURS[ch]
