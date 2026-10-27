@@ -21,7 +21,7 @@
     "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/",
     "format": "eslint . --fix --cache --cache-location node_modules/.cache/eslint/",
     "typecheck": "tsgo --noEmit",
-    "test": "vitest run",
+    "test": "bun test",
     "palette-names": "node scripts/palette-names.ts"
   },
   "dependencies": {
