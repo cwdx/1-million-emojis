@@ -31,8 +31,8 @@
     "@cw/eslint-config": "*",
     "@typescript/native-preview": "^7.0.0-dev.20260707.2",
     "emojilib": "^4.0.3",
-    "eslint": "^10.11.0",
-    "typescript": "^6.0.3",
+    "eslint": "^10.13.0",
+    "typescript": "7.1.0-beta",
     "unicode-emoji-json": "^0.9.0",
     "vitest": "^5.0.1"
   }
